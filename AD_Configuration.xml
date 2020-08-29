@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<ad xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="AD_Configuration.xsd">
+	<fsmo>
+		<forest name="forest.corp">
+			<schema>dc04</schema>
+			<naming>dc04</naming>
+		</forest>
+		<domain name="domain1.forest.corp">
+			<pdc>dc04</pdc>
+			<rid>dc04</rid>
+			<infrastructure>dc04</infrastructure>
+		</domain>
+	</fsmo>
+	<sites>
+		<site name="PARIS">
+			<subnet>192.168.3.0/24</subnet>
+			<adjacent>GENEVA</adjacent>
+			<link>GENEVA - PARIS</link>
+		</site>
+		<site name="GENEVA">
+			<subnet>192.168.1.0/24</subnet>
+			<subnet>192.168.2.0/24</subnet>
+			<adjacent>PARIS</adjacent>
+			<adjacent>NYC</adjacent>
+			<link>GENEVA - PARIS</link>
+			<link>GENEVA - NYC</link>
+		</site>
+		<site name="NYC">
+			<subnet>192.168.4.0/24</subnet>
+			<adjacent>GENEVA</adjacent>
+			<link>GENEVA - NYC</link>
+		</site>
+	</sites>
+</ad>
