@@ -16,9 +16,14 @@ Script to check health of your Active Directory Environment
 
 # How to Use the Script
 
+*_PUT ALL FILES IN SAME DIRECTORY_*
+
+*_YOU SHOULD CREATE AN SERVICE ACCOUNT WITH DOMAIN ADMINS PERMISSIONS TO RUN THIS SCRIPT PROPERLY_"
+
 [x] AD_Health_Check_Ambev_v1.17_GIT.ps1 - is the main script
 
 [x] AD_Configuration.xml - file where you put your PDC, SCHEMA MASTER, RID MASTER, INTRASTRUCTURE MASTER, NAMING MASTER and yours Sites, Subnets and Links 
 
 [x] gpotool.exe - This tool is explained in https://www.windowstechno.com/group-policy-verification-tool-gpotool-exe/
 
+[x] KPIDefaultLarge-0.gif , KPIDefaultLarge-1.gif, KPIDefaultLarge-2.gif - Images to show the general status of HTML
