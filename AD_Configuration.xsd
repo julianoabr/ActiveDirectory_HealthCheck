@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="ad">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="fsmo" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="forest" minOccurs="1" maxOccurs="1">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="schema" type="xs:string" minOccurs="1" maxOccurs="1" />
+										<xs:element name="naming" type="xs:string" minOccurs="1" maxOccurs="1" />
+									</xs:sequence>
+									<xs:attribute name="name" type="xs:string" use="required" />
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="domain" minOccurs ="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="pdc" type="xs:string" minOccurs="1" maxOccurs="1" />
+										<xs:element name="rid" type="xs:string" minOccurs="1" maxOccurs="1" />
+										<xs:element name="infrastructure" type="xs:string" minOccurs="1" maxOccurs="1" />
+									</xs:sequence>
+									<xs:attribute name="name" type="xs:string" use="required" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="sites" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="site" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="subnet" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+										<xs:element name="adjacent" type="xs:string" maxOccurs="unbounded" />
+										<xs:element name="link" type="xs:string" maxOccurs="unbounded" />
+									</xs:sequence>
+									<xs:attribute name="name" type="xs:string" use="required" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
