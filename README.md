@@ -13,6 +13,9 @@ Script to check health of your Active Directory Environment
 
 [3] v1.17, 2020-08-18 - Adjust to run GpoTool in mode Forest or Domain 
 
+[4] v1.18, 2020-12-10 - Adjust embedded images to be sent by e-mail and put a boolean variable to choose if you want to send e-mail or not 
+
+
 
 # How to Use the Script
 
