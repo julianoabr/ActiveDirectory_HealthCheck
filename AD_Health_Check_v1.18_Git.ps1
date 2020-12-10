@@ -59,32 +59,33 @@ v1.11, 2014-11-21 - Add the Global Catalog info. Correction of Get-DFSROutbandIn
 v1.12, 2014-11-24 - Reorder the tests and use a new Test-TcpConnection function to speed up the script. Remove old code. Better casting variables. Modify Test-Ldap, Test-Ping and Test-Wmi to get rid of unnecessary messages. 
 v1.13, 2014-12-03 - Correction of minor bugs. Change the way the jobs for dcdiag are started. Failback to older Test-TcpConnection because of many false positive
 v1.14, 2014-12-23 - Use Test-NetConnection and Test-Connection when available. Add ping response time to HTML
-v1.15, 2019-11-22 - Adjust Hash Tables to Powershell v3 and superior, and change gpotool to latest version (Find me at https://github.com/julianoabr or julianoalvesbr@live.com)
-v1.16, 2019-11-26 - Add Parameter to choose between verify Forest or Domain and option to sendmail(Find me at https://github.com/julianoabr or julianoalvesbr@live.com)
-v1.17, 2020-08-18 - Adjust to run GpoTool in mode Forest or Domain (Find me at https://github.com/julianoabr or julianoalvesbr@live.com)
+v1.15, 2019-11-22 - Adjust Hash Tables to Powershell v3 and superior (Find me at jaribeiro@uoldiveo.com or julianoalvesbr@live.com or https://github.com/julianoabr)
+v1.16, 2019-11-26 - Add Parameter to choose between verify Forest or Domain (Find me at jaribeiro@uoldiveo.com or julianoalvesbr@live.com or https://github.com/julianoabr)
+v1.17, 2020-08-18 - Adjust to run GpoTool in mode Forest or Domain (Find me at jaribeiro@uoldiveo.com or julianoalvesbr@live.com or https://github.com/julianoabr)
+v1.18, 2020-12-10 - Adjust embedded images to be sent by e-mail and put a boolean variable to choose if you want to send e-mail or not (Find me at jaribeiro@uoldiveo.com or julianoalvesbr@live.com or https://github.com/julianoabr)
 #>
 
 Param
 (
-    [string]$LogFilename = 'AD_Health_Check.txt',
+    [System.String]$LogFilename = 'AD_Health_Check.txt',
     
-    [string]$OutputFile = 'AD_Health_Check.html',
+    [System.String]$OutputFile = 'AD_Health_Check.html',
     
-    [string]$ConfigurationFile = 'AD_Configuration.xml',
+    [System.String]$ConfigurationFile = 'AD_Configuration.xml',
     
     [ValidateSet("Full","Limited")]
-    [string]$Scope = 'Full',
+    [System.String]$Scope = 'Full',
     
     [ValidateSet("Forest","Domain")]
-    [string]$Level = 'Domain',
+    [System.String]$Level = 'Domain',
 
-    [System.Boolean]$sendMail = $true
+    [System.Boolean]$sendMail = $false
 
 
 )
 
 # Version
-[string]$ScriptVersion = 'v1.17'
+[string]$ScriptVersion = 'v1.18'
 
 # Normalize the Scope
 [string]$scope = $scope.Substring(0,1).ToUpper() + $scope.substring(1).ToLower()
@@ -469,7 +470,7 @@ function Test-LDAP
     (
         [string]$filter = '(cn=krbtgt)', 
         [Parameter(Mandatory=$true)][string]$server, 
-        [ValidateSet("Base","Subtree","OneLevel")] [string]$scope = 'Subtree',
+        [ValidateSet("Base","Subtree","OneLevel")] [string]$ldapScope = 'Subtree',
         [string]$pageSize = '1'
     )
 
@@ -1854,9 +1855,13 @@ Set-Location -Path $scriptDirectory
 
 # Set filenames and Delete old log file
 $outputFile = $scriptDirectory + '\' + $outputFile
+
 $logFilename = $scriptDirectory + '\' + $logFilename
+
 Remove-Item $logFilename -ErrorAction SilentlyContinue
+
 Write-Log ('----------------------------------------------------------------------------------------------------')
+
 Write-Log ('------------------------------------- START on ' + $env:computername + ' ---------------------------------------')
 
 
@@ -1987,10 +1992,10 @@ Write-Log ("Starting dcdiag status")
 
 
 [string]$random = Get-Random
-New-Item -Path 'Trash' -ItemType directory -ErrorAction SilentlyContinue
+New-Item -Path 'trash' -ItemType directory -ErrorAction SilentlyContinue
 
 # Remove Files older than 2 days
-$olderFiles += Get-ChildItem -Path ('.\Trash\*.*') | Where-Object { $_.LastWriteTimeUtc -lt ((Get-Date).AddDays(-2)) }
+$olderFiles += Get-ChildItem -Path ('.\trash\*.*') | Where-Object { $_.LastWriteTimeUtc -lt ((Get-Date).AddDays(-2)) }
 if ($olderFiles.Count -gt 1)
 {
     Remove-Item -Path $olderFiles -ErrorAction SilentlyContinue
@@ -3350,7 +3355,10 @@ for ($j=0; $j -le $numberOfDiagnostics-1; $j++)
 }
 # ----------------------------------------------------------------------------------------------------------------
 
-
+#Import Gray Image
+$grayImagefile = $scriptDirectory + "\Images\Button-Blank-Gray-icon.png"
+$grayImageBits = [Convert]::ToBase64String((Get-Content $grayImagefile -Encoding Byte))
+$grayImageHTML = "<img src=data:image/png;base64,$($grayImageBits) alt='gray icon' width='64' heigh='64'/>"
 
 # ----------------------------------------------------------------------------------------------------------------
 # Create the HTML document
@@ -3414,7 +3422,7 @@ $htmlCode += '    <h2>'
 $htmlCode += '    ' + $subtitle
 
 $htmlCode += '    <br><br>'
-$htmlCode += '    Overall Status from ' + $env:computername.ToLower() + '  <img src="KpiToModify.gif" width="42" height="42" />' 
+$htmlCode += '    Overall Status from ' + $env:computername.ToLower() + $grayImageHTML 
 $KpiToModifyPosition = $htmlCode.Count - 1
 
 $htmlCode += '    </h2>'
@@ -3744,17 +3752,32 @@ foreach ($line in $htmlCode)
 if ($flagRed)
 {
     # Overall Status is 'red'
-    $htmlCode[$KpiToModifyPosition] = $htmlCode[$KpiToModifyPosition].Replace('"KpiToModify.gif"', '"KPIDefaultLarge-2.gif"')
+    #Import Red Image
+    $RedImagefile = $scriptDirectory + "\Images\Button-Blank-Red-icon.png"
+    $RedImageBits = [Convert]::ToBase64String((Get-Content $RedImagefile -Encoding Byte))
+    $RedImageHTML = "<img src=data:image/png;base64,$($RedImageBits) alt='Red icon'/>"
+    
+    $htmlCode[$KpiToModifyPosition] = $htmlCode[$KpiToModifyPosition].Replace($grayImageHTML, $redImageHTML)
 }
 elseif ($flagYellow)
 {
     # Overall Status is 'yellow'
-    $htmlCode[$KpiToModifyPosition] = $htmlCode[$KpiToModifyPosition].Replace('"KpiToModify.gif"', '"KPIDefaultLarge-1.gif"')
+    #Import Yellow Image
+    $YellowImagefile = $scriptDirectory + "\Images\Button-Blank-Yellow-icon.png"
+    $YellowImageBits = [Convert]::ToBase64String((Get-Content $YellowImagefile -Encoding Byte))
+    $YellowImageHTML = "<img src=data:image/png;base64,$($YellowImageBits) alt='Yellow icon'/>"
+
+    $htmlCode[$KpiToModifyPosition] = $htmlCode[$KpiToModifyPosition].Replace($grayImageHTML, $YellowImageHTML)
 }
 else
 {
     # Overall Status is 'green'
-    $htmlCode[$KpiToModifyPosition] = $htmlCode[$KpiToModifyPosition].Replace('"KpiToModify.gif"', '"KPIDefaultLarge-0.gif"')
+    #Import Green Image
+    $greenImagefile = $scriptDirectory + "\Images\Button-Blank-Green-icon.png"
+    $greenImageBits = [Convert]::ToBase64String((Get-Content $greenImagefile -Encoding Byte))
+    $greenImageHTML = "<img src=data:image/png;base64,$($greenImageBits) alt='green icon'/>"
+    
+    $htmlCode[$KpiToModifyPosition] = $htmlCode[$KpiToModifyPosition].Replace($grayImageHTML, $greenImageHTML)
 }
 # ----------------------------------------------------------------------------------------------------------------
 
@@ -3769,28 +3792,31 @@ foreach ($line in $htmlCode)
     Add-Content -Path $outputFile -Value $line
 }
 # ----------------------------------------------------------------------------------------------------------------
-
-
-if ($sendMail){
+ 
 
 # ----------------------------------------------------------------------------------------------------------------
-# Sending the ouput file by e-mail
+# Check If SendMail
 # ----------------------------------------------------------------------------------------------------------------
-    $EmailFrom = "powershellrobot@yourdomain.local"
 
-    $EmailTo = "lista1@yourdomain.local","lista2@yourdomain.local","lista3@yourdomain.local"
+if ($SendMail)
+{
+   
+   $EmailFrom = "powershellrobot@uoldiveo.com"
 
-    $EmailSMTPServer = "your.smtpserver.local"
+    $EmailTo = "l-microsoft-ambev@uoldiveo.com","l-imp-microsoft-ambev@uoldiveo.com","l-n2-ambev-infraestrutura@uoldiveo.com"
+    #$EmailTo = "jaribeiro@uoldiveo.com"
 
-    $EmailCC = "yourboss@yourdomain.local"
+    $EmailSMTPServer = "acsnx2.la.interbrew.net"
 
-    Send-MailMessage -SmtpServer $EmailSMTPServer -from $EmailFrom -to $EmailTo -Cc $emailCC -Subject "[YOURDOMAIN] HealthCheck - Forest $forestName" -Body "$htmlCode" -BodyAsHtml -Priority High 
+    $EmailCC = "jaribeiro@uoldiveo.com"
+
+    Send-MailMessage -SmtpServer $EmailSMTPServer -from $EmailFrom -to $EmailTo -Cc $emailCC -Subject "[AMBEV] HealthCheck - Forest $forestName" -Body "$htmlCode" -BodyAsHtml -Priority High  
 
 
 }
 else{
 
-    Write-Host "Finish Script" -ForegroundColor White -BackgroundColor DarkGreen 
-
+    Write-Host "You Choose Not To Send Email. Finishing Script" -ForegroundColor White -BackgroundColor DarkBlue
 
 }
+
