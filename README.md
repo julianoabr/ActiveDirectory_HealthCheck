@@ -19,7 +19,7 @@ Script to check health of your Active Directory Environment
 
 # How to Use the Script
 
-*_PUT ALL FILES IN SAME DIRECTORY_*
+*_PUT the following files in same folder: AD_Configuration.xsd, AD_Configuration.xml, gpotool.exe and AD_Health_Check_v1.18_Git.ps1*
 
 *_YOU SHOULD CREATE AN SERVICE ACCOUNT WITH DOMAIN ADMINS PERMISSIONS TO RUN THIS SCRIPT PROPERLY_"
 
