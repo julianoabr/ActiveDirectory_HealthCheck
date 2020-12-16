@@ -29,4 +29,8 @@ Script to check health of your Active Directory Environment
 
 [x] gpotool.exe - This tool is explained in https://www.windowstechno.com/group-policy-verification-tool-gpotool-exe/
 
+[x]ADHC_Auxiliar_XML.xlsx - worksheet to help to fill the XML after you run the script for the first time
+
 [x] Button-Blank-Gray-icon.png ,Button-Blank-Green-icon.png, Button-Blank-Red-icon.png and Button-Blank-Yellow-icon.png  - Images must stay in subfolder Images. One level where you put the main script. 
+
+[x]When you run this script for the first time, the HTML output will bring information about Sites, Subnets, Adjacent Sites and Site Links (with yellow collor). You have to insert all information in Ad_Configuration.xml for the next time these informations will become in green colour and any change will be noted. To help I created a worksheet called ADHC_Auxiliar_XML.xlsx where you put the information and paste to the XML. 
