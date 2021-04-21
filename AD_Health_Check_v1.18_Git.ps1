@@ -63,6 +63,7 @@ v1.15, 2019-11-22 - Adjust Hash Tables to Powershell v3 and superior (Find me at
 v1.16, 2019-11-26 - Add Parameter to choose between verify Forest or Domain (Find me at jaribeiro@uoldiveo.com or julianoalvesbr@live.com or https://github.com/julianoabr)
 v1.17, 2020-08-18 - Adjust to run GpoTool in mode Forest or Domain (Find me at jaribeiro@uoldiveo.com or julianoalvesbr@live.com or https://github.com/julianoabr)
 v1.18, 2020-12-10 - Adjust embedded images to be sent by e-mail and put a boolean variable to choose if you want to send e-mail or not (Find me at jaribeiro@uoldiveo.com or julianoalvesbr@live.com or https://github.com/julianoabr)
+v1.18.1 2021-03-25 - Attach LogFile to E-mail (Find me at jaribeiro@uoldiveo.com or julianoalvesbr@live.com or https://github.com/julianoabr)
 #>
 
 Param
@@ -81,11 +82,12 @@ Param
 
     [System.Boolean]$sendMail = $false
 
+    [System.Boolean]$attachLog = $true
 
 )
 
 # Version
-[string]$ScriptVersion = 'v1.18'
+[string]$ScriptVersion = 'v1.18.1'
 
 # Normalize the Scope
 [string]$scope = $scope.Substring(0,1).ToUpper() + $scope.substring(1).ToLower()
@@ -397,27 +399,27 @@ function Test-Ping
             [int]$statusCode = $result.StatusCode
             switch ($statusCode)
                 {
-                    '0'	    { [string]$pingResult = 'Success'; [bool]$pingOk = $true } 
-                    '11001' { [string]$pingResult = 'Buffer Too Small '; [bool]$pingOk = $false }
-                    '11002' { [string]$pingResult = 'Destination Net Unreachable'; [bool]$pingOk = $false } 
-                    '11003' { [string]$pingResult = 'Destination Host Unreachable'; [bool]$pingOk = $false } 
-                    '11004' { [string]$pingResult = 'Destination Protocol Unreachable'; [bool]$pingOk = $false } 
-                    '11005' { [string]$pingResult = 'Destination Port Unreachable'; [bool]$pingOk = $false } 
-                    '11006' { [string]$pingResult = 'No Resources'; [bool]$pingOk = $false } 
-                    '11007' { [string]$pingResult = 'Bad Option'; [bool]$pingOk = $false } 
-                    '11008' { [string]$pingResult = 'Hardware Error'; [bool]$pingOk = $false } 
-                    '11009' { [string]$pingResult = 'Packet Too Big'; [bool]$pingOk = $false } 
-                    '11010' { [string]$pingResult = 'Request Timed Out'; [bool]$pingOk = $false } 
-                    '11011' { [string]$pingResult = 'Bad Request'; [bool]$pingOk = $false } 
-                    '11012' { [string]$pingResult = 'Bad Route'; [bool]$pingOk = $false } 
-                    '11013' { [string]$pingResult = 'TimeToLive Expired Transit'; [bool]$pingOk = $false } 
-                    '11014' { [string]$pingResult = 'TimeToLive Expired Reassembly'; [bool]$pingOk = $false } 
-                    '11015' { [string]$pingResult = 'Parameter Problem'; [bool]$pingOk = $false } 
-                    '11016' { [string]$pingResult = 'Source Quench'; [bool]$pingOk = $false } 
-                    '11017' { [string]$pingResult = 'Option Too Big'; [bool]$pingOk = $false } 
-                    '11018' { [string]$pingResult = 'Bad Destination'; [bool]$pingOk = $false } 
-                    '11032' { [string]$pingResult = 'Negotiating IPSEC'; [bool]$pingOk = $false } 
-                    '11050' { [string]$pingResult = 'General Failure'; [bool]$pingOk = $false }  
+                    '0'	    { [string]$pingResult = 'Success'; [bool]$pingOk = $true }Â 
+                    '11001' { [string]$pingResult = 'Buffer Too SmallÂ '; [bool]$pingOk = $false }
+                    '11002' { [string]$pingResult = 'Destination Net Unreachable'; [bool]$pingOk = $false }Â 
+                    '11003' { [string]$pingResult = 'Destination Host Unreachable'; [bool]$pingOk = $false }Â 
+                    '11004' { [string]$pingResult = 'Destination Protocol Unreachable'; [bool]$pingOk = $false }Â 
+                    '11005' { [string]$pingResult = 'Destination Port Unreachable'; [bool]$pingOk = $false }Â 
+                    '11006' { [string]$pingResult = 'No Resources'; [bool]$pingOk = $false }Â 
+                    '11007' { [string]$pingResult = 'Bad Option'; [bool]$pingOk = $false }Â 
+                    '11008' { [string]$pingResult = 'Hardware Error'; [bool]$pingOk = $false }Â 
+                    '11009' { [string]$pingResult = 'Packet Too Big'; [bool]$pingOk = $false }Â 
+                    '11010' { [string]$pingResult = 'Request Timed Out'; [bool]$pingOk = $false }Â 
+                    '11011' { [string]$pingResult = 'Bad Request'; [bool]$pingOk = $false }Â 
+                    '11012' { [string]$pingResult = 'Bad Route'; [bool]$pingOk = $false }Â 
+                    '11013' { [string]$pingResult = 'TimeToLive Expired Transit'; [bool]$pingOk = $false }Â 
+                    '11014' { [string]$pingResult = 'TimeToLive Expired Reassembly'; [bool]$pingOk = $false }Â 
+                    '11015' { [string]$pingResult = 'Parameter Problem'; [bool]$pingOk = $false }Â 
+                    '11016' { [string]$pingResult = 'Source Quench'; [bool]$pingOk = $false }Â 
+                    '11017' { [string]$pingResult = 'Option Too Big'; [bool]$pingOk = $false }Â 
+                    '11018' { [string]$pingResult = 'Bad Destination'; [bool]$pingOk = $false }Â 
+                    '11032' { [string]$pingResult = 'Negotiating IPSEC'; [bool]$pingOk = $false }Â 
+                    '11050' { [string]$pingResult = 'General Failure'; [bool]$pingOk = $false }Â  
                     default { [string]$pingResult = 'Unknown Error'; [bool]$pingOk = $false }
                 }
         }
@@ -683,7 +685,7 @@ function Get-DcOsName
 {
     Param
     (
-        [string]$dc = ([ADSI]“LDAP://RootDSE”).dnshostname.ToString()
+        [string]$dc = ([ADSI]Â“LDAP://RootDSEÂ”).dnshostname.ToString()
     )
 
     [string]$dc = '*' + $dc + '*'
@@ -702,7 +704,7 @@ function Get-DcGlobalCatalogInfo
 {
     Param
     (
-        [string]$dc = ([ADSI]“LDAP://RootDSE”).dnshostname.ToString()
+        [string]$dc = ([ADSI]Â“LDAP://RootDSEÂ”).dnshostname.ToString()
     )
 
     [string]$dc = '*' + $dc + '*'
@@ -1289,15 +1291,15 @@ function Set-ValueAddedHtmlInfo
     if ($typeOfTest -eq 'DFSRBacklog')
     {
         [int]$maxBackLog = 0
-        for ($j=0; $j -lt $fieldToTest.Replace('<br>','§').Split('§').Count; $j++)
+        for ($j=0; $j -lt $fieldToTest.Replace('<br>','Â§').Split('Â§').Count; $j++)
         {
-            if (   ($fieldToTest.Replace('<br>','§').Split('§').Get($j) -ne '') `
-              -and (!($fieldToTest.Replace('<br>','§').Split('§').Get($j).Contains('Partner'))) `
-              -and (!($fieldToTest.Replace('<br>','§').Split('§').Get($j).Contains('Unknown'))) `
-              -and (!($fieldToTest.Replace('<br>','§').Split('§').Get($j).Contains('n/a'))) `
+            if (   ($fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j) -ne '') `
+              -and (!($fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j).Contains('Partner'))) `
+              -and (!($fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j).Contains('Unknown'))) `
+              -and (!($fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j).Contains('n/a'))) `
                )
             {
-                [int]$maxBackLog = [math]::max($maxBackLog,$fieldToTest.Replace('<br>','§').Split('§').Get($j))
+                [int]$maxBackLog = [math]::max($maxBackLog,$fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j))
             }
         }
         
@@ -1316,15 +1318,15 @@ function Set-ValueAddedHtmlInfo
     elseif ($typeOfTest -eq 'DFSRFolderEnabled')
     {
         [bool]$dfsrFolderEnabled = $true
-        for ($j=0; $j -lt $fieldToTest.Replace('<br>','§').Split('§').Count; $j++)
+        for ($j=0; $j -lt $fieldToTest.Replace('<br>','Â§').Split('Â§').Count; $j++)
         {
-            if (   ($fieldToTest.Replace('<br>','§').Split('§').Get($j) -ne '') `
-              -and (!($fieldToTest.Replace('<br>','§').Split('§').Get($j).Contains('Partner'))) `
-              -and (!($fieldToTest.Replace('<br>','§').Split('§').Get($j).Contains('Unknown'))) `
-              -and (!($fieldToTest.Replace('<br>','§').Split('§').Get($j).Contains('n/a'))) `
+            if (   ($fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j) -ne '') `
+              -and (!($fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j).Contains('Partner'))) `
+              -and (!($fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j).Contains('Unknown'))) `
+              -and (!($fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j).Contains('n/a'))) `
                )
             {
-                [bool]$dfsrFolderEnabled = $dfsrFolderEnabled -and $fieldToTest.Replace('<br>','§').Split('§').Get($j)
+                [bool]$dfsrFolderEnabled = $dfsrFolderEnabled -and $fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j)
             }
         }
 
@@ -1342,15 +1344,15 @@ function Set-ValueAddedHtmlInfo
     elseif ($typeOfTest -eq 'DFSRConnectionEnabled')
     {
         [bool]$dfsrConnectionEnabled = $true
-        for ($j=0; $j -lt $fieldToTest.Replace('<br>','§').Split('§').Count; $j++)
+        for ($j=0; $j -lt $fieldToTest.Replace('<br>','Â§').Split('Â§').Count; $j++)
         {
-            if (   ($fieldToTest.Replace('<br>','§').Split('§').Get($j) -ne '') `
-              -and (!($fieldToTest.Replace('<br>','§').Split('§').Get($j).Contains('Partner'))) `
-              -and (!($fieldToTest.Replace('<br>','§').Split('§').Get($j).Contains('Unknown'))) `
-              -and (!($fieldToTest.Replace('<br>','§').Split('§').Get($j).Contains('n/a'))) `
+            if (   ($fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j) -ne '') `
+              -and (!($fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j).Contains('Partner'))) `
+              -and (!($fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j).Contains('Unknown'))) `
+              -and (!($fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j).Contains('n/a'))) `
                )
             {
-                [bool]$dfsrConnectionEnabled = $dfsrConnectionEnabled -and $fieldToTest.Replace('<br>','§').Split('§').Get($j)
+                [bool]$dfsrConnectionEnabled = $dfsrConnectionEnabled -and $fieldToTest.Replace('<br>','Â§').Split('Â§').Get($j)
             }
         }
 
@@ -1625,9 +1627,9 @@ function Set-ValueAddedHtmlInfo
         # Sites Links seen in AD
         [array]$siteLinksInAD = @()
         $siteLinksInAD += ''
-        for ($k=0; $k -lt $fieldToTest.Replace('<br>','§').Split('§').Count; $k++)
+        for ($k=0; $k -lt $fieldToTest.Replace('<br>','Â§').Split('Â§').Count; $k++)
         {
-            $siteLinkInAD = $fieldToTest.Replace('<br>','§').Split('§').Get($k)
+            $siteLinkInAD = $fieldToTest.Replace('<br>','Â§').Split('Â§').Get($k)
             if ($siteLinkInAD.Length -gt 0)
             {
                 $siteLinksInAD += $siteLinkInAD
@@ -1711,9 +1713,9 @@ function Set-ValueAddedHtmlInfo
         #Subnets seen in AD
         [array]$subnetsInAD = @()
         $subnetsInAD += ''
-         for ($k=0; $k -lt $fieldToTest.Replace('<br>','§').Split('§').Count; $k++)
+         for ($k=0; $k -lt $fieldToTest.Replace('<br>','Â§').Split('Â§').Count; $k++)
         {
-            $subnetInAD = $fieldToTest.Replace('<br>','§').Split('§').Get($k)
+            $subnetInAD = $fieldToTest.Replace('<br>','Â§').Split('Â§').Get($k)
             if ($subnetInAD.Length -gt 0)
             {
                 $subnetsInAD += $subnetInAD
@@ -1787,9 +1789,9 @@ function Set-ValueAddedHtmlInfo
         # Adjacent Sites seen in AD
         [array]$adjacentSitesInAD = @()
         $adjacentSitesInAD += ''
-        for ($k=0; $k -lt $fieldToTest.Replace('<br>','§').Split('§').Count; $k++)
+        for ($k=0; $k -lt $fieldToTest.Replace('<br>','Â§').Split('Â§').Count; $k++)
         {
-            $adjacentSiteInAD = $fieldToTest.Replace('<br>','§').Split('§').Get($k)
+            $adjacentSiteInAD = $fieldToTest.Replace('<br>','Â§').Split('Â§').Get($k)
             if ($adjacentSiteInAD.Length -gt 0)
             {
                 $adjacentSitesInAD += $adjacentSiteInAD
@@ -1951,7 +1953,7 @@ Write-Log ('--------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------
 Write-Log ('Creating the list of responding DCs')
 # Get the current DC
-[string]$currentServer = ([ADSI]“LDAP://RootDSE”).dnshostname.ToString()
+[string]$currentServer = ([ADSI]Â“LDAP://RootDSEÂ”).dnshostname.ToString()
 [string]$currentServer = $currentServer.Split('.').Get(0).ToLower()
 
 # Create the list of DCs to test
@@ -2113,8 +2115,8 @@ foreach ($domain in $domains)
         [long]$ridAvailablePool = [long][string]$rid.item(0).Properties.ridavailablepool
         [long]$TotalSIDS = $ridAvailablePool / ([math]::Pow(2,32))
         [long]$temp64Val = $TotalSIDS * ([math]::Pow(2,32))
-        [long]$currentRidPoolCount = $ridAvailablePool – $temp64Val
-        [long]$ridsRemaining = $totalSIDS – $currentRidPoolCount
+        [long]$currentRidPoolCount = $ridAvailablePool Â– $temp64Val
+        [long]$ridsRemaining = $totalSIDS Â– $currentRidPoolCount
         [double]$ridsIssuedPcntOfTotal = ( $currentRIDPoolCount / $totalSIDS )
         [string]$ridsIssuedPercentofTotal = "{0:P3}" -f $RIDsIssuedPcntOfTotal
         [double]$ridsRemainingPcntOfTotal = ( $ridsRemaining / $totalSIDS )
@@ -2969,7 +2971,7 @@ foreach ($DC in $DCs)
         Write-Log ('Trying to get OS name of ' + $dc.ToLower())
         [string]$os = Get-DcOsName -dc $dc
         Write-Log ('    OS name of ' + $dc.ToLower() + ' is ' + $os)
-        #[string]$os = $os.Replace('™','').Replace('®','').Replace('©','').Replace('Windows ','').Replace('Server ','')
+        #[string]$os = $os.Replace('Â™','').Replace('Â®','').Replace('Â©','').Replace('Windows ','').Replace('Server ','')
 
         Write-Log ('Trying to get Global Catalog Info for  ' + $dc.ToLower())
         [string]$isGlobalCatalog = Get-DcGlobalCatalogInfo -dc $dc
@@ -3798,25 +3800,35 @@ foreach ($line in $htmlCode)
 # Check If SendMail
 # ----------------------------------------------------------------------------------------------------------------
 
-if ($SendMail)
+If ($SendMail)
 {
    
-   $EmailFrom = "powershellrobot@uoldiveo.com"
+   $EmailFrom = "powershellrobot@yourdomain.com"
 
-    $EmailTo = "l-microsoft-ambev@uoldiveo.com","l-imp-microsoft-ambev@uoldiveo.com","l-n2-ambev-infraestrutura@uoldiveo.com"
-    #$EmailTo = "jaribeiro@uoldiveo.com"
+    $EmailTo = ("l-microsoft-team@yourdomain.com","l-n2-infraestrutura@yourdomain.com")
+    #$EmailTo = "your-team-leader@yourdomain.com"
 
-    $EmailSMTPServer = "acsnx2.la.interbrew.net"
+    $EmailSMTPServer = "yoursmtpserver.com"
 
-    $EmailCC = "jaribeiro@uoldiveo.com"
+    $EmailCC = ("your-team-leader@yourdomain.com","infra-team@yourdomain.com","yourboss@yourdomain.com","unclephill@yourdomain.com")
 
-    Send-MailMessage -SmtpServer $EmailSMTPServer -from $EmailFrom -to $EmailTo -Cc $emailCC -Subject "[AMBEV] HealthCheck - Forest $forestName" -Body "$htmlCode" -BodyAsHtml -Priority High  
+    If ($attachLog){
+    
+        Send-MailMessage -SmtpServer $EmailSMTPServer -from $EmailFrom -to $EmailTo -Cc $emailCC -Subject "[COMPANY-DOMAIN] HealthCheck - Forest $forestName" -Body "$htmlCode" -BodyAsHtml -Attachments $logFileName -Priority High  
 
+    
+    }#End of If Attach Log
+    else{
+    
+        Send-MailMessage -SmtpServer $EmailSMTPServer -from $EmailFrom -to $EmailTo -Cc $emailCC -Subject "[COMPANY-DOMAIN] HealthCheck - Forest $forestName" -Body "$htmlCode" -BodyAsHtml -Priority High
 
-}
-else{
+    
+    }#end of Else Attach Log
+   
+
+}#end of IF Send Mail
+Else{
 
     Write-Host "You Choose Not To Send Email. Finishing Script" -ForegroundColor White -BackgroundColor DarkBlue
 
-}
-
+}#End of Else Send Mail
