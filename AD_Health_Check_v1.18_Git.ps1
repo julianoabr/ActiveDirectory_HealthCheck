@@ -63,7 +63,7 @@ v1.15, 2019-11-22 - Adjust Hash Tables to Powershell v3 and superior (Find me at
 v1.16, 2019-11-26 - Add Parameter to choose between verify Forest or Domain (Find me at jaribeiro@uoldiveo.com or julianoalvesbr@live.com or https://github.com/julianoabr)
 v1.17, 2020-08-18 - Adjust to run GpoTool in mode Forest or Domain (Find me at jaribeiro@uoldiveo.com or julianoalvesbr@live.com or https://github.com/julianoabr)
 v1.18, 2020-12-10 - Adjust embedded images to be sent by e-mail and put a boolean variable to choose if you want to send e-mail or not (Find me at jaribeiro@uoldiveo.com or julianoalvesbr@live.com or https://github.com/julianoabr)
-v1.18.1 2021-03-25 - Attach LogFile to E-mail (Find me at jaribeiro@uoldiveo.com or julianoalvesbr@live.com or https://github.com/julianoabr)
+v1.18.1 2021-03-25 - Attach LogFile to E-mail (Find me at julianoalvesbr@live.com or https://github.com/julianoabr)
 #>
 
 Param
